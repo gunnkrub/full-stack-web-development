@@ -30,7 +30,7 @@ export const api = async (request: RequestEvent, data?: Record<string, unknown>)
                 }
             })
             // todos = todos.filter(todo => todo.uid !== request.params.uid)
-            status: 200;
+            status = 200;
             break;
         case "PATCH":
             body = await prisma.todo.update({
@@ -42,12 +42,13 @@ export const api = async (request: RequestEvent, data?: Record<string, unknown>)
                     text: data.text
                 }
             })
-            status: 200;
+            status = 200;
             break;
         default:
             break;
     }
 
+    console.log(request.request.headers.get("accept"))
     if (request.request.method.toUpperCase() !== "GET" &&
          request.request.headers.get("accept") !== "application.json") {
         return {
@@ -55,7 +56,7 @@ export const api = async (request: RequestEvent, data?: Record<string, unknown>)
             headers: {
                 location: "/"
             }
-        }
+        };
     }
 
     return {

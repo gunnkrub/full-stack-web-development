@@ -1,12 +1,12 @@
-//import type { Request } from "@sveltejs/kit";
+import type { RequestEvent } from "@sveltejs/kit";
 
 let todos: Todo[] = [];
 
-export const api = (request: Request, todo?: Todo) => {
+export const api = (request: RequestEvent, data?: Record<string, unknown>) => {
     let body = {};
     let status = 500;
 
-    switch (request.method.toUpperCase()) {
+    switch (request.request.method.toUpperCase()) {
         case "GET":
             body = todos;
             status = 200;
@@ -14,19 +14,28 @@ export const api = (request: Request, todo?: Todo) => {
             
         case "POST":
             //body = request.formData();
-            todos.push(todo)
-            body = todo;
+            todos.push(data as Todo)
+            body = data;
             status = 201;
             break;
         case "DELETE":
             todos = todos.filter(todo => todo.uid !== request.params.uid)
             status: 200;
             break;
+        case "PATCH":
+            todos = todos.map(todo => {
+                if (todo.uid === request.params.uid) {
+                    todo.text = data.text as string;
+                }
+                return todo;
+            })
+            status: 200;
+            break;
         default:
             break;
     }
 
-    if (request.method.toUpperCase() !== "GET") {
+    if (request.request.method.toUpperCase() !== "GET") {
         return {
             status: 303,
             headers: {

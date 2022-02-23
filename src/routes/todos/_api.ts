@@ -13,7 +13,6 @@ export const api = (request: RequestEvent, data?: Record<string, unknown>) => {
             break;
             
         case "POST":
-            //body = request.formData();
             todos.push(data as Todo)
             body = data;
             status = 201;
@@ -29,14 +28,16 @@ export const api = (request: RequestEvent, data?: Record<string, unknown>) => {
                     else todo.done = data.done as boolean;
                 }
                 return todo;
-            })
+            })  
             status: 200;
+            body = todos.find(todo => todo.uid === request.params.uid);
             break;
         default:
             break;
     }
 
-    if (request.request.method.toUpperCase() !== "GET") {
+    if (request.request.method.toUpperCase() !== "GET" &&
+         request.request.headers.get("accept") !== "application.json") {
         return {
             status: 303,
             headers: {

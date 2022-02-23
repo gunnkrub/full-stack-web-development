@@ -1,22 +1,21 @@
 <script context="module" lang="ts">
-    import type {Load} from "@sveltejs/kit";
-
-    export const load = async ({fetch}) => {
-        const res = await fetch("/todos.json")
-
-        if(res.ok) {
-            const todos = await res.json()
-            return {
-            props: { todos }
-            }
-        }
-
-        const { message } = await res.text();
-        return {
-            error: new Error(message)
-        }
+  import type { Load } from "@sveltejs/kit";
+  //import { enhance } from "$lib/actions/form";
+  export const load: Load = async ({ fetch }) => {
+    const res = await fetch("/todos.json");
+    if (res.ok) {
+      const todos = await res.json();
+      return {
+        props: { todos }
+      }
+    }
     
-};
+    const { message } = await res.json();
+    console.log(message)
+    return {
+      error: new Error(message)
+    }
+  };
 </script>
 
 <script lang="ts">

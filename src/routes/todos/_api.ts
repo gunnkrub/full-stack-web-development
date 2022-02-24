@@ -33,15 +33,28 @@ export const api = async (request: RequestEvent, data?: Record<string, unknown>)
             status = 200;
             break;
         case "PATCH":
-            body = await prisma.todo.update({
-                where: {
-                    uid: request.params.uid
-                },
-                data: {
-                    done: data.done,
-                    text: data.text
-                }
-            })
+            if (data.text == null){
+                body = await prisma.todo.update({
+                    where: {
+                        uid: request.params.uid
+                    },
+                    data: {
+                        done: data.done
+                    }
+                })
+            }
+            else {
+                body = await prisma.todo.update({
+                    where: {
+                        uid: request.params.uid
+                    },
+                    data: {
+                        done: data.done,
+                        text: data.text
+                    }
+                })
+            }
+            
             status = 200;
             break;
         default:
@@ -50,7 +63,7 @@ export const api = async (request: RequestEvent, data?: Record<string, unknown>)
 
     console.log(request.request.headers.get("accept"))
     if (request.request.method.toUpperCase() !== "GET" &&
-         request.request.headers.get("accept") !== "application.json") {
+         request.request.headers.get("accept") == "application.json") {
         return {
             status: 303,
             headers: {
